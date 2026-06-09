@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  customer
+  specialist
+  admin
+}
+
+enum AdminRole {
+  support
+  verification
+  operations
+  super_admin
+}
+
+enum SpecialistApprovalStatus {
+  draft
+  pending_review
+  approved
+  rejected
+  suspended
+}
+
+enum ServiceCategory {
+  towing
+  jump_start
+  flat_tire
+  vehicle_lockout
+  fuel_delivery
+  mobile_mechanic_diagnostics
+  minor_roadside_repair
+}
+
+enum RequestStatus {
+  created
+  open
+  accepted
+  en_route
+  arrived
+  diagnosing
+  completed
+  unable_to_complete
+  cancelled
+  unmatched
+}
+
+model User {
+  id          String    @id @default(cuid())
+  phoneNumber String    @unique
+  role        UserRole
+  adminRole   AdminRole?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  specialistProfile SpecialistProfile?
+  customerRequests  AssistanceRequest[] @relation("CustomerRequests")
+  assignedRequests  AssistanceRequest[] @relation("AssignedRequests")
+}
+
+model City {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  active    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serviceAreas ServiceArea[]
+}
+
+model ServiceArea {
+  id        String   @id @default(cuid())
+  cityId    String
+  name      String
+  active    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  city     City @relation(fields: [cityId], references: [id])
+  requests AssistanceRequest[]
+
+  @@unique([cityId, name])
+}
+
+model SpecialistProfile {
+  id                     String                   @id @default(cuid())
+  userId                 String                   @unique
+  approvalStatus         SpecialistApprovalStatus @default(draft)
+  approvedCategories     ServiceCategory[]
+  approvedServiceAreaIds String[]
+  available              Boolean                  @default(false)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model AssistanceRequest {
+  id              String          @id @default(cuid())
+  customerId      String
+  specialistId    String?
+  serviceCategory ServiceCategory
+  serviceAreaId   String
+  status          RequestStatus   @default(created)
+  coarseArea      String
+  latitude        Decimal         @db.Decimal(9, 6)
+  longitude       Decimal         @db.Decimal(9, 6)
+  description     String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  customer    User        @relation("CustomerRequests", fields: [customerId], references: [id])
+  specialist  User?       @relation("AssignedRequests", fields: [specialistId], references: [id])
+  serviceArea ServiceArea @relation(fields: [serviceAreaId], references: [id])
+
+  @@index([status, serviceCategory, serviceAreaId])
+  @@index([customerId])
+  @@index([specialistId])
+}
