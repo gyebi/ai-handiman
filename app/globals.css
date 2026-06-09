@@ -39,6 +39,20 @@ textarea {
   padding: 1rem;
 }
 
+.brand-logo-panel {
+  max-width: 36rem;
+  overflow: hidden;
+}
+
+.brand-logo-image {
+  display: block;
+  width: min(100%, 34rem);
+  height: auto;
+  max-height: 8rem;
+  object-fit: contain;
+  object-position: left center;
+}
+
 @media (min-width: 768px) {
   .page-frame {
     padding: 2rem;

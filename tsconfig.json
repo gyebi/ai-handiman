@@ -36,6 +36,8 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    ".worktrees",
+    "node_modules",
+    "src/dataconnect-generated"
   ]
 }

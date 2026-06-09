@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": "22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,6 +19,7 @@
   },
   "dependencies": {
     "@prisma/client": "7.8.0",
+    "firebase": "12.14.0",
     "lucide-react": "1.17.0",
     "next": "16.2.7",
     "react": "19.2.7",

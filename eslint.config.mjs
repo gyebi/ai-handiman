@@ -3,7 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  globalIgnores([".next/**", "node_modules/**", "coverage/**"]),
+  globalIgnores([".next/**", ".worktrees/**", "node_modules/**", "coverage/**", "src/dataconnect-generated/**"]),
   ...nextVitals,
   ...nextTs,
   {

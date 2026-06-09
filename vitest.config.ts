@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
+    exclude: ["**/.worktrees/**", "**/.next/**", "**/coverage/**", "**/dist/**", "**/node_modules/**"],
     globals: true,
   },
   resolve: {

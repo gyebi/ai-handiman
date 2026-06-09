@@ -1,4 +1,6 @@
-import { FileSearch, LockKeyhole, ShieldAlert } from "lucide-react";
+import Image from "next/image";
+import { FileSearch, LockKeyhole } from "lucide-react";
+import { brandAssets } from "@/lib/brand-assets";
 
 const reviewAreas = ["Specialist approvals", "Safety complaints", "Request lifecycle audit"];
 
@@ -7,8 +9,8 @@ export default function AdminPage() {
     <main className="page-frame">
       <section className="py-6 md:py-12">
         <div className="mb-6 flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-md bg-alert/10 text-alert">
-            <ShieldAlert aria-hidden="true" className="h-6 w-6" />
+          <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-md bg-alert/10 text-alert">
+            <Image src={brandAssets.icon} alt="" width={166} height={164} className="h-10 w-10 object-contain" />
           </div>
           <div>
             <p className="text-sm font-medium text-slate-500">Admin workspace</p>
