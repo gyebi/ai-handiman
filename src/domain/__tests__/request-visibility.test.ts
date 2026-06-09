@@ -25,6 +25,12 @@ const approvedSpecialist: SpecialistProfile = {
   available: true,
 };
 
+const otherApprovedSpecialist: SpecialistProfile = {
+  ...approvedSpecialist,
+  id: "specialist_profile_2",
+  userId: "specialist_user_2",
+};
+
 describe("request visibility", () => {
   test("customer can view their own request summary and precise location", () => {
     const user: User = { id: "customer_1", phoneNumber: "+233000000001", role: "customer" };
@@ -46,6 +52,28 @@ describe("request visibility", () => {
 
     expect(canViewPreciseLocation(user, request, approvedSpecialist)).toBe(true);
   });
+
+  test("assigned specialist can view summary after accepting an active request", () => {
+    const user: User = { id: "specialist_user_1", phoneNumber: "+233000000002", role: "specialist" };
+
+    expect(canViewRequestSummary(user, request, approvedSpecialist)).toBe(true);
+  });
+
+  test("matching specialist cannot view summary after another specialist accepts the request", () => {
+    const user: User = { id: "specialist_user_2", phoneNumber: "+233000000003", role: "specialist" };
+
+    expect(canViewRequestSummary(user, request, otherApprovedSpecialist)).toBe(false);
+  });
+
+  test.each(["completed", "cancelled", "unmatched"] as const)(
+    "matching specialist cannot view summary for %s request",
+    (status) => {
+      const closedRequest = { ...request, specialistId: undefined, status };
+      const user: User = { id: "specialist_user_2", phoneNumber: "+233000000003", role: "specialist" };
+
+      expect(canViewRequestSummary(user, closedRequest, otherApprovedSpecialist)).toBe(false);
+    },
+  );
 
   test("unapproved specialist cannot view matching request summary", () => {
     const user: User = { id: "specialist_user_2", phoneNumber: "+233000000003", role: "specialist" };

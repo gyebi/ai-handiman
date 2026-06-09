@@ -1,6 +1,12 @@
 import type { AssistanceRequest, SpecialistProfile, User } from "./entities";
+import type { RequestStatus } from "./request-status";
 
 const activeAssignedStatuses = ["accepted", "en_route", "arrived", "diagnosing"] as const;
+type ActiveAssignedStatus = (typeof activeAssignedStatuses)[number];
+
+function isActiveAssignedStatus(status: RequestStatus): status is ActiveAssignedStatus {
+  return activeAssignedStatuses.includes(status as ActiveAssignedStatus);
+}
 
 function isApprovedForRequest(
   user: User,
@@ -32,7 +38,15 @@ export function canViewRequestSummary(
   }
 
   if (user.role === "specialist") {
-    return isApprovedForRequest(user, specialistProfile, request);
+    if (!isApprovedForRequest(user, specialistProfile, request)) {
+      return false;
+    }
+
+    if (request.status === "open") {
+      return true;
+    }
+
+    return request.specialistId === user.id && isActiveAssignedStatus(request.status);
   }
 
   return false;
@@ -52,7 +66,7 @@ export function canViewPreciseLocation(
   }
 
   const isAssigned = request.specialistId === user.id;
-  const isActive = activeAssignedStatuses.includes(request.status as (typeof activeAssignedStatuses)[number]);
+  const isActive = isActiveAssignedStatus(request.status);
 
   return isAssigned && isActive && isApprovedForRequest(user, specialistProfile, request);
 }
