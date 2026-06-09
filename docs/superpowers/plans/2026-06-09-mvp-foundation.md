@@ -118,7 +118,7 @@ Create `package.json`:
 
 ```json
 {
-  "name": "ai-thumbtack",
+  "name": "ai-handiman",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@9.15.4",
@@ -293,7 +293,7 @@ coverage
 Create `.env.example`:
 
 ```bash
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ai_thumbtack"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ai_handiman"
 NEXT_PUBLIC_APP_NAME="Roadside Assist Ghana"
 ```
 
