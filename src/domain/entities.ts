@@ -1,4 +1,5 @@
 import type { AdminRole, UserRole } from "./roles";
+import type { RequestStatus } from "./request-status";
 import type { ServiceCategory } from "./service-categories";
 
 export type SpecialistApprovalStatus = "draft" | "pending_review" | "approved" | "rejected" | "suspended";
@@ -36,4 +37,14 @@ export type RequestLocation = {
   coarseArea: string;
   latitude: number;
   longitude: number;
+};
+
+export type AssistanceRequest = {
+  id: string;
+  customerId: string;
+  specialistId?: string;
+  serviceCategory: ServiceCategory;
+  serviceAreaId: string;
+  status: RequestStatus;
+  location: RequestLocation;
 };
