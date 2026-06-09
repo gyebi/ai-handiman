@@ -83,7 +83,7 @@ Cost and scale constraint:
 - Create: `.gitignore`
 - Create: `.env.example`
 
-- [ ] **Step 1: Review dependency release age**
+- [x] **Step 1: Review dependency release age**
 
 Run release-age checks before installing. Use the package registry pages or `npm view <package> time --json` for each package and confirm the selected version is at least seven days old as of 2026-06-09.
 
@@ -112,7 +112,7 @@ lucide-react
 
 Expected: every selected version was published on or before 2026-06-02, or an exception is documented before install.
 
-- [ ] **Step 2: Create package metadata**
+- [x] **Step 2: Create package metadata**
 
 Create `package.json`:
 
@@ -160,7 +160,7 @@ Create `package.json`:
 
 Replace each `PIN_AFTER_RELEASE_AGE_REVIEW` with an exact approved version before running install.
 
-- [ ] **Step 3: Install dependencies**
+- [x] **Step 3: Install dependencies**
 
 Run:
 
@@ -170,7 +170,7 @@ pnpm install --save-exact
 
 Expected: `pnpm-lock.yaml` is created and all dependency versions are exact.
 
-- [ ] **Step 4: Add TypeScript and tooling config**
+- [x] **Step 4: Add TypeScript and tooling config**
 
 Create `tsconfig.json`:
 
@@ -297,7 +297,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ai_handiman"
 NEXT_PUBLIC_APP_NAME="Roadside Assist Ghana"
 ```
 
-- [ ] **Step 5: Run verification**
+- [x] **Step 5: Run verification**
 
 Run:
 
@@ -308,7 +308,7 @@ pnpm test
 
 Expected: typecheck succeeds, and Vitest reports no test files or an empty successful run depending on the installed Vitest version.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add package.json pnpm-lock.yaml next.config.ts tsconfig.json vitest.config.ts eslint.config.mjs postcss.config.mjs tailwind.config.ts .gitignore .env.example
@@ -324,7 +324,7 @@ git commit -m "chore: scaffold application tooling"
 - Create: `src/domain/service-categories.ts`
 - Create: `src/domain/entities.ts`
 
-- [ ] **Step 1: Write role definitions**
+- [x] **Step 1: Write role definitions**
 
 Create `src/domain/roles.ts`:
 
@@ -340,7 +340,7 @@ export function isAdminRole(role: UserRole): boolean {
 }
 ```
 
-- [ ] **Step 2: Write service category definitions**
+- [x] **Step 2: Write service category definitions**
 
 Create `src/domain/service-categories.ts`:
 
@@ -358,7 +358,7 @@ export const serviceCategories = [
 export type ServiceCategory = (typeof serviceCategories)[number];
 ```
 
-- [ ] **Step 3: Write shared entity types**
+- [x] **Step 3: Write shared entity types**
 
 Create `src/domain/entities.ts`:
 
@@ -404,7 +404,7 @@ export type RequestLocation = {
 };
 ```
 
-- [ ] **Step 4: Run verification**
+- [x] **Step 4: Run verification**
 
 Run:
 
@@ -414,7 +414,7 @@ pnpm typecheck
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/domain/roles.ts src/domain/service-categories.ts src/domain/entities.ts
@@ -429,7 +429,7 @@ git commit -m "feat: add core domain types"
 - Create: `src/domain/request-status.ts`
 - Create: `src/domain/__tests__/request-status.test.ts`
 
-- [ ] **Step 1: Write the failing lifecycle tests**
+- [x] **Step 1: Write the failing lifecycle tests**
 
 Create `src/domain/__tests__/request-status.test.ts`:
 
@@ -473,7 +473,7 @@ describe("request lifecycle", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run:
 
@@ -483,7 +483,7 @@ pnpm test src/domain/__tests__/request-status.test.ts
 
 Expected: FAIL because `src/domain/request-status.ts` does not exist.
 
-- [ ] **Step 3: Implement lifecycle rules**
+- [x] **Step 3: Implement lifecycle rules**
 
 Create `src/domain/request-status.ts`:
 
@@ -521,7 +521,7 @@ export function canTransitionRequest(from: RequestStatus, to: RequestStatus): bo
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run:
 
@@ -532,7 +532,7 @@ pnpm typecheck
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/domain/request-status.ts src/domain/__tests__/request-status.test.ts
@@ -548,7 +548,7 @@ git commit -m "feat: add request lifecycle rules"
 - Create: `src/domain/request-visibility.ts`
 - Create: `src/domain/__tests__/request-visibility.test.ts`
 
-- [ ] **Step 1: Extend request entity types**
+- [x] **Step 1: Extend request entity types**
 
 Update `src/domain/entities.ts` to include:
 
@@ -566,7 +566,7 @@ export type AssistanceRequest = {
 };
 ```
 
-- [ ] **Step 2: Write failing visibility tests**
+- [x] **Step 2: Write failing visibility tests**
 
 Create `src/domain/__tests__/request-visibility.test.ts`:
 
@@ -648,7 +648,7 @@ describe("request visibility", () => {
 });
 ```
 
-- [ ] **Step 3: Run test to verify it fails**
+- [x] **Step 3: Run test to verify it fails**
 
 Run:
 
@@ -658,7 +658,7 @@ pnpm test src/domain/__tests__/request-visibility.test.ts
 
 Expected: FAIL because `request-visibility.ts` does not exist.
 
-- [ ] **Step 4: Implement visibility rules**
+- [x] **Step 4: Implement visibility rules**
 
 Create `src/domain/request-visibility.ts`:
 
@@ -718,7 +718,7 @@ export function canViewPreciseLocation(
 }
 ```
 
-- [ ] **Step 5: Run test to verify it passes**
+- [x] **Step 5: Run test to verify it passes**
 
 Run:
 
@@ -730,7 +730,7 @@ pnpm typecheck
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/domain/entities.ts src/domain/request-visibility.ts src/domain/__tests__/request-visibility.test.ts
@@ -744,7 +744,7 @@ git commit -m "feat: add request visibility rules"
 **Files:**
 - Create: `prisma/schema.prisma`
 
-- [ ] **Step 1: Create schema**
+- [x] **Step 1: Create schema**
 
 Create `prisma/schema.prisma`:
 
@@ -876,7 +876,7 @@ model AssistanceRequest {
 }
 ```
 
-- [ ] **Step 2: Validate schema**
+- [x] **Step 2: Validate schema**
 
 Run:
 
@@ -887,7 +887,7 @@ pnpm prisma:generate
 
 Expected: PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add prisma/schema.prisma package.json pnpm-lock.yaml
@@ -905,7 +905,7 @@ git commit -m "feat: add initial database schema"
 - Create: `app/admin/page.tsx`
 - Create: `app/globals.css`
 
-- [ ] **Step 1: Add global styles**
+- [x] **Step 1: Add global styles**
 
 Create `app/globals.css`:
 
@@ -936,7 +936,7 @@ textarea {
 }
 ```
 
-- [ ] **Step 2: Add root layout**
+- [x] **Step 2: Add root layout**
 
 Create `app/layout.tsx`:
 
@@ -958,7 +958,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 }
 ```
 
-- [ ] **Step 3: Add customer screen**
+- [x] **Step 3: Add customer screen**
 
 Create `app/page.tsx`:
 
@@ -1013,7 +1013,7 @@ export default function CustomerHomePage() {
 }
 ```
 
-- [ ] **Step 4: Add specialist screen**
+- [x] **Step 4: Add specialist screen**
 
 Create `app/specialist/page.tsx`:
 
@@ -1045,7 +1045,7 @@ export default function SpecialistPage() {
 }
 ```
 
-- [ ] **Step 5: Add admin screen**
+- [x] **Step 5: Add admin screen**
 
 Create `app/admin/page.tsx`:
 
@@ -1079,7 +1079,7 @@ export default function AdminPage() {
 }
 ```
 
-- [ ] **Step 6: Run verification**
+- [x] **Step 6: Run verification**
 
 Run:
 
@@ -1092,7 +1092,7 @@ pnpm build
 
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add app
