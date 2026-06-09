@@ -42,7 +42,7 @@ A vetted roadside professional, mobile mechanic, tow operator, locksmith, tire t
 
 ### Admin
 
-An operations user who reviews specialist applications, manages service areas and categories, monitors active requests, handles support notes, reviews incidents, and suspends risky accounts.
+An operations user with role-scoped permissions. Admin access is split into support, verification, operations, and super-admin responsibilities so one ordinary admin cannot access every sensitive action or record.
 
 ## MVP Service Categories
 
@@ -80,7 +80,11 @@ This keeps the first build manageable while leaving room for later native mobile
 - Optional customer email.
 - Role-based access control for customer, specialist, and admin.
 - Admin approval required before specialists can accept requests.
-- Admin accounts require stronger authentication than customer and specialist accounts.
+- Admin accounts require MFA.
+- OTP codes expire quickly, have attempt limits, resend cooldowns, and abuse monitoring.
+- Sessions use secure cookie or token settings, defined lifetimes, and revocation support.
+- Phone-number changes require re-verification.
+- Customers and specialists can review and revoke active sessions.
 
 ### Requests And Dispatch
 
@@ -90,6 +94,14 @@ This keeps the first build manageable while leaving room for later native mobile
 - One specialist accepts a request at a time.
 - The MVP uses location pin, ETA, and status updates instead of full continuous GPS tracking.
 - If no specialist accepts a request, it becomes unmatched and admin can intervene.
+- After acceptance and before work starts, the specialist proposes a service fee, call-out fee, or fee range based on the reported problem type and visible request details.
+- The customer must accept the proposed fee or fee range in-app before non-emergency work proceeds.
+- If the specialist discovers that the real issue differs materially from the reported problem, the specialist must propose a revised fee and reason, and the customer must accept the revision before additional work proceeds.
+- Before acceptance, specialists see only coarse area information, not the customer's exact location pin.
+- Exact customer location is revealed only to the verified specialist who accepts the request.
+- Exact location access is removed when a request is cancelled, unmatched, or no longer assigned to that specialist.
+- Suspended, unapproved, or out-of-category specialists cannot view request details or precise location.
+- Access to precise location is logged and retained only as long as needed for safety, support, and legal obligations.
 
 ### Specialist Verification
 
@@ -105,12 +117,18 @@ Specialists must submit:
 
 Admins can approve, reject, request more information, or suspend a specialist.
 
+Verification must include manual document review, profile-photo or selfie match checks, category-specific qualification checks, and business verification where applicable. Towing, locksmith, fuel delivery, and mobile mechanic categories each require separate approval gates because the risks and equipment differ. Specialists can accept jobs only in approved service categories and approved operating areas. Re-verification is required on a defined cadence and after material profile changes, complaints, suspicious activity, or safety incidents.
+
 ### Chat
 
 - In-app chat starts after a specialist accepts a request.
 - Phone numbers are not exposed by default.
 - Chat messages are associated with a request.
 - Users can report abuse or safety issues from the chat context.
+- Chat has per-conversation rate limits and attachment restrictions.
+- The system detects risky content such as threats, suspicious links, and attempts to exchange phone numbers, then flags according to policy.
+- Abuse reports preserve evidence for admin review.
+- Users can mute or block non-essential chat after a report while preserving safety/support access.
 
 ### Admin Operations
 
@@ -124,6 +142,15 @@ Admins can:
 - Review complaints and safety incidents.
 - Add internal support notes.
 - Review audit logs for sensitive actions.
+
+Admin permissions are separated by role:
+
+- Support admins can review requests, support notes, reports, and limited account information.
+- Verification admins can review specialist applications and verification documents.
+- Operations admins can manage active service areas, categories, and stuck requests.
+- Super-admins manage admin users, elevated permissions, and sensitive policy changes.
+
+Sensitive actions such as specialist approval, specialist suspension, verification document access, and audit-log export require elevated permission, additional confirmation, or dual control where practical. Audit logs are immutable to ordinary admins and cannot be edited or deleted through the application.
 
 ### Ratings And Reviews
 
@@ -147,6 +174,13 @@ AI must:
 - Defer to qualified specialist judgment.
 - Handle uncertainty explicitly.
 - Avoid replacing safety guidance or emergency services.
+- Produce advisory metadata only and never auto-complete dispatch, safety, or account decisions.
+- Avoid step-by-step hazardous repair instructions.
+- Trigger deterministic emergency or support flows for danger signals rather than relying on model judgment alone.
+- Treat user messages and uploaded media as untrusted input, with prompt-injection defenses.
+- Log AI outputs for support and safety review.
+- Use providers and settings that limit training and retention of customer media and request data where available.
+- Disclose to users when media or text may be processed by AI or third-party AI services.
 
 ## Safety And Emergency Handling
 
@@ -155,6 +189,11 @@ AI must:
 - If a customer reports an unsafe location or immediate danger, the app surfaces emergency guidance and support escalation.
 - Admins can review safety incidents and suspend accounts.
 - Abuse reports from chat or request flows are admin-visible.
+- Current Ghana emergency guidance must be validated before launch and reviewed periodically.
+- The Accra MVP must define service-area boundaries before launch.
+- Customers can use landmark-based location fallback when GPS is unavailable, inaccurate, or denied.
+- Upload flows should support low-bandwidth conditions by allowing requests without media and by limiting video size or duration.
+- Initial language and support assumptions must be explicit for the launch market.
 
 ## Error And Edge Case Handling
 
@@ -172,6 +211,18 @@ Payments are offline in the MVP. The platform tracks request lifecycle and servi
 
 The architecture should leave room for future in-platform payments, including platform fees, receipts, disputes, refunds, and compliance checks.
 
+Offline payment safety requirements:
+
+- The app clearly discloses that the platform does not hold funds in the MVP.
+- Specialists provide a proposed service fee, call-out fee, or fee range before work starts, based on the problem type, vehicle context, location, and available media.
+- Customers accept, reject, or request clarification on the proposed fee in-app before work starts.
+- The accepted fee agreement is recorded with timestamp, specialist, customer, request, included work, exclusions, and whether it is fixed or a range.
+- If the problem changes after inspection, any revised fee requires a new in-app customer acceptance before additional non-emergency work proceeds.
+- Completion notes can record agreed work, accepted amount or range, final amount discussed, and payment method without storing sensitive payment credentials.
+- Complaint reason codes include overcharging, bait-and-switch pricing, non-payment, unsafe payment pressure, and fraud.
+- Admins can review payment-related safety and fraud complaints even though the MVP does not process refunds.
+- Specialists are prohibited from using payment pressure, threats, or misleading pricing.
+
 ## Security Requirements
 
 - Enforce strong role separation between customer, specialist, and admin.
@@ -186,6 +237,14 @@ The architecture should leave room for future in-platform payments, including pl
 - Protect against fake requests, spam, repeated cancellations, harassment, and account abuse.
 - Avoid direct phone-number exposure by default.
 - Make privacy implications of location sharing clear to users.
+- Encrypt stored media and verification documents using managed server-side encryption.
+- Use short-lived signed URLs for private file access.
+- Scan uploads for malware and quarantine suspicious files.
+- Validate uploads by MIME sniffing, size, duration, and content policy rather than file extension alone.
+- Strip EXIF and embedded location metadata from customer photos and videos where practical.
+- Apply stricter access policies to identity documents than ordinary request media.
+- Log admin access to verification documents and sensitive customer media.
+- Define retention, deletion, and export flows for customer media, verification documents, chats, and location data.
 
 ## Dependency Supply-Chain Security
 
@@ -193,6 +252,7 @@ Dependency security is a launch requirement.
 
 - The seven-day waiting rule applies to all dependencies, including runtime, development, test, build, linting, formatting, and code generation packages.
 - New dependencies and version upgrades must not be installed until at least seven days after release.
+- The rule applies to direct dependencies, transitive lockfile refreshes, base container images, GitHub Actions or CI actions, package manager plugins, code generation downloads, and toolchain downloads.
 - Exceptions are allowed only for documented emergency security fixes after manual review.
 - Lockfiles are required and committed.
 - Runtime and package manager versions are pinned.
@@ -201,6 +261,10 @@ Dependency security is a launch requirement.
 - Prefer mature, maintained packages with healthy project signals, clear licensing, and provenance where available.
 - Keep dependency count low and prefer framework or platform built-ins when reasonable.
 - Avoid package install scripts unless explicitly approved.
+- Use exact pinning where practical for dependencies, CI actions, base images, and build tools.
+- Verify provenance, signatures, or attestations where available.
+- CI must enforce dependency release-age checks and block unapproved packages under seven days old.
+- Emergency dependency exceptions must document the vulnerability, affected package, reviewer, approval time, and follow-up verification.
 - CI must run tests, linting, build checks, dependency audit, secret scanning, and static analysis before merge.
 - Generate an SBOM for releases.
 
@@ -230,6 +294,10 @@ The MVP should include focused tests for the highest-risk flows:
 - Rate limit behavior for OTP, request creation, chat, and uploads.
 - AI triage uncertainty and human-handoff behavior.
 - Dependency policy checks for lockfiles, audits, and seven-day dependency age review.
+- Precise location visibility before and after request acceptance, cancellation, and reassignment.
+- Admin role permissions and audit-log immutability.
+- Specialist category approval and out-of-category request access denial.
+- Private media access, signed URL expiry, and verification-document access controls.
 
 Release verification must include linting, tests, build checks, dependency audit, secret scanning, static analysis, and SBOM generation.
 
