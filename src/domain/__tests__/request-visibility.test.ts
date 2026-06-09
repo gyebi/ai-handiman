@@ -54,11 +54,45 @@ describe("request visibility", () => {
     expect(canViewRequestSummary(user, request, unapproved)).toBe(false);
   });
 
+  test("specialist cannot use another specialist profile to view request summary", () => {
+    const user: User = { id: "specialist_user_2", phoneNumber: "+233000000003", role: "specialist" };
+
+    expect(canViewRequestSummary(user, request, approvedSpecialist)).toBe(false);
+  });
+
+  test("assigned specialist cannot use another specialist profile to view precise location", () => {
+    const user: User = { id: "specialist_user_1", phoneNumber: "+233000000002", role: "specialist" };
+    const otherProfile = { ...approvedSpecialist, userId: "specialist_user_2" };
+
+    expect(canViewPreciseLocation(user, request, otherProfile)).toBe(false);
+  });
+
+  test("suspended assigned specialist cannot view precise location", () => {
+    const user: User = { id: "specialist_user_1", phoneNumber: "+233000000002", role: "specialist" };
+    const suspended = { ...approvedSpecialist, approvalStatus: "suspended" as const };
+
+    expect(canViewPreciseLocation(user, request, suspended)).toBe(false);
+  });
+
+  test("out-of-category assigned specialist cannot view precise location", () => {
+    const user: User = { id: "specialist_user_1", phoneNumber: "+233000000002", role: "specialist" };
+    const outOfCategory: SpecialistProfile = { ...approvedSpecialist, approvedCategories: ["jump_start"] };
+
+    expect(canViewPreciseLocation(user, request, outOfCategory)).toBe(false);
+  });
+
   test("specialist loses precise location access after cancellation", () => {
     const cancelled = { ...request, status: "cancelled" as const };
     const user: User = { id: "specialist_user_1", phoneNumber: "+233000000002", role: "specialist" };
 
     expect(canViewPreciseLocation(user, cancelled, approvedSpecialist)).toBe(false);
+  });
+
+  test("specialist loses precise location access after request becomes unmatched", () => {
+    const unmatched = { ...request, status: "unmatched" as const };
+    const user: User = { id: "specialist_user_1", phoneNumber: "+233000000002", role: "specialist" };
+
+    expect(canViewPreciseLocation(user, unmatched, approvedSpecialist)).toBe(false);
   });
 
   test("support admin can view request summary but not precise location by default", () => {
