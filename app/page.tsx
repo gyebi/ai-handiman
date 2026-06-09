@@ -1,6 +1,17 @@
 import Image from "next/image";
 import { CarFront, MapPin, ShieldCheck, Wrench } from "lucide-react";
 import { brandAssets } from "@/lib/brand-assets";
+import { serviceCategories } from "@/domain/service-categories";
+
+const serviceCategoryLabels: Record<(typeof serviceCategories)[number], string> = {
+  towing: "Towing",
+  jump_start: "Jump start",
+  flat_tire: "Flat tire help",
+  vehicle_lockout: "Vehicle lockout",
+  fuel_delivery: "Fuel delivery",
+  mobile_mechanic_diagnostics: "Mobile mechanic diagnostics",
+  minor_roadside_repair: "Minor roadside repair",
+};
 
 const requestSteps = [
   "Choose service type",
@@ -39,16 +50,63 @@ export default function CustomerPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-road px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-ink">
+          <form className="request-form" aria-label="Create roadside assistance request">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="field-label sm:col-span-2">
+                Service type
+                <select className="field-control" defaultValue="">
+                  <option value="" disabled>
+                    Choose roadside help
+                  </option>
+                  {serviceCategories.map((category) => (
+                    <option key={category} value={category}>
+                      {serviceCategoryLabels[category]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="field-label sm:col-span-2">
+                Vehicle details
+                <input
+                  className="field-control"
+                  name="vehicleDescription"
+                  placeholder="Toyota Corolla, black, GR-1234-24"
+                  type="text"
+                />
+              </label>
+
+              <label className="field-label sm:col-span-2">
+                Nearest area or landmark
+                <input
+                  className="field-control"
+                  name="nearestArea"
+                  placeholder="East Legon near the tunnel"
+                  type="text"
+                />
+              </label>
+
+              <label className="field-label sm:col-span-2">
+                What happened?
+                <textarea
+                  className="field-control min-h-28 resize-y"
+                  name="problemDescription"
+                  placeholder="Describe what happened, what you hear or see, and whether the car can move."
+                />
+              </label>
+            </div>
+
+            <div className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm leading-6 text-slate-700">
+              <MapPin aria-hidden="true" className="mr-2 inline h-4 w-4 text-service" />
+              Precise GPS is optional at draft time. Share the nearest area first; exact location is shown only
+              to the accepted specialist.
+            </div>
+
+            <button className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-road px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-ink sm:w-auto">
               <Wrench aria-hidden="true" className="h-5 w-5" />
-              Request assistance
+              Create request draft
             </button>
-            <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 font-semibold text-ink transition hover:border-service">
-              <MapPin aria-hidden="true" className="h-5 w-5 text-service" />
-              Set service area
-            </button>
-          </div>
+          </form>
         </div>
 
         <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

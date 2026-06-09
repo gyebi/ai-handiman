@@ -10,7 +10,11 @@ describe("entry pages", () => {
     render(<CustomerPage />);
 
     expect(screen.getByRole("heading", { level: 1, name: "Roadside help, dispatched clearly" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Request assistance" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Service type")).toBeInTheDocument();
+    expect(screen.getByLabelText("Vehicle details")).toBeInTheDocument();
+    expect(screen.getByLabelText("Nearest area or landmark")).toBeInTheDocument();
+    expect(screen.getByLabelText("What happened?")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Create request draft" })).toBeInTheDocument();
     expect(screen.getByText("Share the nearest area first. Precise location unlocks only for the accepted specialist.")).toBeInTheDocument();
   });
 
