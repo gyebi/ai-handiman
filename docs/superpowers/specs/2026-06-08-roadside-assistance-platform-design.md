@@ -70,7 +70,19 @@ The MVP should be a single full-stack web application with clear internal bounda
 - Private object storage for uploaded photos, videos, and verification documents
 - Chat and notification services
 
-This keeps the first build manageable while leaving room for later native mobile apps and payment integrations.
+This keeps the first build manageable while leaving room for later native mobile apps, payment integrations, and operational scale.
+
+The project must support a low-cost study mode and a later production scale-up path. Local development should avoid paid external services by default. OTP, maps, object storage, notifications, AI triage, payments, and analytics should be integrated behind clear provider boundaries so the MVP can start with local, mocked, or manually operated adapters and later switch to production providers without rewriting the core domains.
+
+Scale-up design requirements:
+
+- Keep request lifecycle, authorization, pricing agreement, and dispatch rules in provider-independent domain code.
+- Isolate paid or replaceable services behind interfaces for OTP, maps/geocoding, object storage, media scanning, notifications, AI triage, payments, and observability.
+- Use local or no-op adapters in development and test environments.
+- Keep production provider credentials out of source control and load them through environment-specific configuration.
+- Design database records with stable IDs, audit timestamps, and status history so future reporting, support, and compliance workflows can be added.
+- Avoid implementation choices that assume only one city, one service category, one payment method, or one notification provider.
+- Add queue or background-job boundaries before production launch for slow work such as media scanning, notification delivery, AI analysis, and unmatched-request escalation.
 
 ## Core Domains
 

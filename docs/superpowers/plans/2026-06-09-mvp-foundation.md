@@ -4,7 +4,7 @@
 
 **Goal:** Build the first executable foundation for the roadside assistance marketplace: app scaffold, domain model, role-aware access helpers, and request lifecycle rules.
 
-**Architecture:** Use a single TypeScript full-stack web application with a shared domain layer that can be tested without a browser or database. Keep UI, persistence, and domain rules separated so later plans can add OTP, admin screens, chat, uploads, and AI triage without rewriting the core model.
+**Architecture:** Use a single TypeScript full-stack web application with a shared domain layer that can be tested without a browser or database. Keep UI, persistence, provider integrations, and domain rules separated so later plans can add real OTP, maps, admin screens, chat, uploads, payments, notifications, and AI triage without rewriting the core model.
 
 **Tech Stack:** Next.js App Router, TypeScript, Tailwind CSS, PostgreSQL, Prisma, Vitest, Testing Library, Playwright. Before installing dependencies, verify release age and pin versions according to the supply-chain policy in the design spec.
 
@@ -19,6 +19,7 @@ This plan implements the first buildable slice only:
 - Request lifecycle transition rules.
 - Role-aware request visibility rules, especially precise-location access.
 - Minimal mobile-first screens for customer, specialist, and admin entry points.
+- Scale-conscious boundaries: domain code must not depend on paid provider SDKs or live external services.
 
 Out of scope for this plan:
 
@@ -33,6 +34,13 @@ Out of scope for this plan:
 - Full admin verification workflows.
 
 Those should be separate plans after this foundation is green.
+
+Cost and scale constraint:
+
+- Build locally by default for the study phase.
+- Use no-op, local, or manually operated adapters until the user explicitly approves paid services.
+- Do not add SMS, maps, cloud storage, payment, analytics, AI, or notification provider SDKs in this foundation slice.
+- Preserve room for production scale by keeping provider-specific code outside the domain layer.
 
 ## File Structure
 
