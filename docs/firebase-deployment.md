@@ -21,6 +21,9 @@ Date: 2026-06-09
 - `apphosting.yaml` sets Cloud Run sizing and references App Hosting secrets for Firebase web config values.
 - Real Firebase web config values live in ignored `.env.local` for local development.
 - Production Firebase web config values were uploaded as App Hosting secrets and are referenced by name in `apphosting.yaml`.
+- Firebase Authentication is the selected identity/session engine, but Firebase Phone Auth SMS is not the selected OTP sender for real users. Real OTP SMS should be sent server-side through Africa's Talking, then exchanged for a Firebase custom token after verification.
+- Future App Hosting secrets must include Africa's Talking credentials, Firebase Admin credentials, and a production `DATABASE_URL` when those integrations are implemented.
+- Neon Free is the preferred study-phase hosted PostgreSQL target for Prisma. This keeps data off the local machine while preserving a standard Postgres interface.
 
 ## Important Deployment Rule
 

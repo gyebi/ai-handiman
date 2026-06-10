@@ -76,4 +76,6 @@ Meaning: GPS data is incomplete. Use no precise location, or include both coordi
 - Specialist matching.
 - Notifications or chat.
 
-These should be added after request draft persistence and authentication are designed.
+Customer authentication is the next planned slice. It will use Africa's Talking for OTP SMS delivery and Firebase Authentication for the client identity/session after OTP verification. Request persistence should follow authentication so saved requests can be tied to a verified user.
+
+The preferred study-phase database target is hosted PostgreSQL on Neon Free, keeping application data off the local machine. The existing Prisma PostgreSQL schema is the starting point for that persistence slice.

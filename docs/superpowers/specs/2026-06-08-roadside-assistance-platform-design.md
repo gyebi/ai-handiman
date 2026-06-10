@@ -74,6 +74,14 @@ This keeps the first build manageable while leaving room for later native mobile
 
 The project must support a low-cost study mode and a later production scale-up path. Local development should avoid paid external services by default. OTP, maps, object storage, notifications, AI triage, payments, and analytics should be integrated behind clear provider boundaries so the MVP can start with local, mocked, or manually operated adapters and later switch to production providers without rewriting the core domains.
 
+Current provider direction:
+
+- Use Firebase Authentication as the primary identity and session engine.
+- Use Africa's Talking for phone OTP SMS delivery instead of Firebase Phone Auth SMS, because Firebase Phone Auth bills per real SMS and the project already has an Africa's Talking account.
+- Use Firebase Admin custom tokens after OTP verification so the client still gets a Firebase-authenticated session.
+- Use a remote PostgreSQL database for application data. Neon Free is the preferred study-phase candidate because it supports hosted Postgres without keeping data on the local machine. Firebase SQL Connect or Cloud SQL remains a future option if tighter Firebase integration becomes more important than provider independence.
+- Keep `DATABASE_URL`, Africa's Talking credentials, Firebase Admin credentials, and any other provider secrets out of source control and in environment-specific secret storage.
+
 Scale-up design requirements:
 
 - Keep request lifecycle, authorization, pricing agreement, and dispatch rules in provider-independent domain code.
@@ -89,6 +97,8 @@ Scale-up design requirements:
 ### Identity And Access
 
 - Phone OTP login for customers and specialists.
+- OTP delivery is handled by the backend through Africa's Talking. OTP codes are generated server-side, stored only as short-lived hashes with attempt limits and resend cooldowns, and never sent directly from the browser.
+- After a valid OTP, the backend creates or resolves the app user and issues a Firebase custom token. The frontend signs in to Firebase with that token and uses Firebase Auth state as the client session.
 - Optional customer email.
 - Role-based access control for customer, specialist, and admin.
 - Admin approval required before specialists can accept requests.
